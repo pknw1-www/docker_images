@@ -1,0 +1,17 @@
+# This is a basic workflow to help you get started with Actions
+
+name: build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - uses: actions/checkout@v4
+      - name: find all directories
+        run: find . -type d -mindepth 2 -maxdepth 3 -exec ls -l "{}" \;
