@@ -24,7 +24,7 @@ jobs:
           for file in ${ALL_CHANGED_FILES}; do
             SOURCE_IMAGE_NAME=$(cat $file | grep SOURCE_IMAGE | awk -F= '{print $2}')
             DEST_IMAGE_NAME=$(cat $file | grep DEST_IMAGE | awk -F= '{print $2}')
-            ${SOURCE_CHECKSUM=$( docker image inspect ${SOURCE_IMAGE_NAME} | jq '.[].Id')
+            SOURCE_CHECKSUM=$( docker image inspect ${SOURCE_IMAGE_NAME} | jq '.[].Id')
             CURRENT_CHECKSUM=$(docker image inspect ${DEST_IMAGE_NAME} | jq '.[].Id')
             echo ${SOURCE_CHECKSUM}
             echo ${CURRENT_CHECKSUM}
