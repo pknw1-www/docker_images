@@ -20,6 +20,7 @@ jobs:
       - name: List all changed files
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           for file in ${ALL_CHANGED_FILES}; do
             SOURCE_IMAGE_NAME=$(cat $file | grep SOURCE_IMAGE | awk -F= '{print $2}')
