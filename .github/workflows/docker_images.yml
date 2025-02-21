@@ -40,6 +40,9 @@ jobs:
       - name: find all directories
         run: |
           trivy image --format json --output trivy.json ghcr.io/alexta69/metube:latest 
+      - name: summarise results
+        run: |
+          cat trivy.json | jq  '.Results'  | jq '.[].Vulnerabilities' >> $GITHUB_STEP_SUMMARY
       - uses: actions/upload-artifact@v4
         with:
           name: trivy-analysis
