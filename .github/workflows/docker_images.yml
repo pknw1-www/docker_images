@@ -36,8 +36,8 @@ jobs:
             CURRENT_CHECKSUM=$(docker image inspect ${DEST_IMAGE_NAME} | jq '.[].Id')
             echo ${SOURCE_CHECKSUM} >> $GITHUB_STEP_SUMMARY
             echo ${CURRENT_CHECKSUM} >> $GITHUB_STEP_SUMMARY
-            gh run cancel ${{ github.run_id }}
-            gh run watch ${{ github.run_id }}
+
+            if [[ ${SOURCE_CHECKSUM} == ${CURRENT_CHECKSUM} ]]; then exit 99; fi
           done
           
   dive_scan:
