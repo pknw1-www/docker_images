@@ -1,0 +1,4 @@
+updated 21/02/25 
+SOURCE_IMAGE=ghcr.io/alexta69/metube:latest
+DEST_IMAGE=pknw1/metube:latest
+  
