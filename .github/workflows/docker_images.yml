@@ -16,4 +16,6 @@ jobs:
       - name: find all directories
         run: |
           find images/ -type f -mindepth 2 -maxdepth 4 -iname .tag -exec realpath "{}" \;
-          find . -type f -mindepth 2 -maxdepth 4 -iname .tag -exec realpath "{}" \;
+      - name: find all directories
+        run: |
+          find . -type f -mindepth 2 -maxdepth 4 -iname .docker -exec realpath "{}" \;
