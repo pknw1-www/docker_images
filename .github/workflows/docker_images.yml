@@ -24,16 +24,24 @@ jobs:
           name: dive-analysis
           path: analysis.json
           if-no-files-found: warn
-  build:
+
+  trivy_scan:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v4
+      - name: install trivy
+        run: |
+          sudo apt-get install wget apt-transport-https gnupg lsb-release
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update -qy
+          sudo apt-get install -qy trivy
       - name: find all directories
         run: |
-          find images/ -type d -mindepth 2 -maxdepth 4 
-      - name: find all directories
-        run: |
-          find . -type f -mindepth 2 -maxdepth 4 -iname .docker -exec realpath "{}" \;
+          trivy image --format json --output trivy.json ghcr.io/alexta69/metube:latest 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: trivy-analysis
+          path: trivy.json
+          if-no-files-found: warn
