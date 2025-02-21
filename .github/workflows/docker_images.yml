@@ -6,6 +6,23 @@ on:
   workflow_dispatch:
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          since_last_remote_commit: true 
+      - name: List all changed files
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            echo "$file was changed"
+          done
+          
   dive_scan:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -48,3 +65,18 @@ jobs:
           name: trivy-analysis
           path: trivy.json
           if-no-files-found: warn
+
+  check_image:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    needs: [dive_scan,trivy_scan]
+    steps:
+      - uses: actions/checkout@v4
+      - name: get image
+        run: |
+          external_digest=$(docker image inspect ${ | jq '.[].RepoDigests[0]')
+
+
+
+
+
