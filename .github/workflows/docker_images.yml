@@ -18,8 +18,12 @@ jobs:
           sudo dpkg -i dive_${VERSION}_linux_amd64.deb
       - name: find all directories
         run: |
-          dive --ci ghcr.io/alexta69/metube:latest >> $GITHUB_STEP_SUMMARY
-          
+          dive --ci --json analysis.json ghcr.io/alexta69/metube:latest 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dive-analysis
+          path: analysis.json
+          if-no-files-found: warn
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
