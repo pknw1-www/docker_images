@@ -37,7 +37,10 @@ jobs:
             echo ${SOURCE_CHECKSUM} >> $GITHUB_STEP_SUMMARY
             echo ${CURRENT_CHECKSUM} >> $GITHUB_STEP_SUMMARY
 
-            if [[ ${SOURCE_CHECKSUM} == ${CURRENT_CHECKSUM} ]]; then exit 99; fi
+            if [[ ${SOURCE_CHECKSUM} == ${CURRENT_CHECKSUM} ]]; then gh run cancel ${{ github.run_id }}
+            else
+             docker tag ${SOURCE_IMAGE_NAME} ${DEST_IMAGE_NAME} && docker push ${DEST_IMAGE_NAME}
+             fi
           done
           
   dive_scan:
