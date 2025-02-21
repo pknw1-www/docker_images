@@ -6,6 +6,20 @@ on:
   workflow_dispatch:
 
 jobs:
+  dive_scan:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: download dive
+        run: |
+          VERSION=$(curl https://github.com/wagoodman/dive/releases.atom|grep "<title>" | head -n2 | tail -n1 | sed 's/title>//g' | sed 's/<//g' | sed 's/v//g'|sed 's/\///g')
+          FILE="https://github.com/wagoodman/dive/releases/download/v${VERSION}/dive_${VERSION}_linux_amd64.deb"
+          wget ${FILE}
+      - name: find all directories
+        run: |
+          find . -type f -mindepth 2 -maxdepth 4 -iname .docker -exec realpath "{}" \;
+
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
