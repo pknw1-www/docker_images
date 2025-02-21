@@ -14,25 +14,51 @@ jobs:
         id: changed-files
         uses: tj-actions/changed-files@v45
         with:
-          since_last_remote_commit: true 
+          files: |
+            **.docker
+            images/**.docker
       - name: List all changed files
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
         run: |
           for file in ${ALL_CHANGED_FILES}; do
-            echo "$file was changed"
+            SOURCE_IMAGE_NAME=$(cat $file | grep SOURCE_IMAGE | awk -F= '{print $2}')
+            DEST_IMAGE_NAME=$(cat $file | grep DEST_IMAGE | awk -F= '{print $2}')
+            ${SOURCE_CHECKSUM=$( docker image inspect ${SOURCE_IMAGE_NAME} | jq '.[].Id')
+            CURRENT_CHECKSUM=$(docker image inspect ${DEST_IMAGE_NAME} | jq '.[].Id')
+            echo ${SOURCE_CHECKSUM}
+            echo ${CURRENT_CHECKSUM}
+            gh run cancel ${{ github.run_id }}
+            gh run watch ${{ github.run_id }}
           done
           
   dive_scan:
     # The type of runner that the job will run on
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            **.docker
+            images/**.docker
+         # since_last_remote_commit: true
       - name: download dive
         run: |
           VERSION=$(curl https://github.com/wagoodman/dive/releases.atom| grep -oP '(?<=<title>v).*?(?=</title>)' | head -n1)
           wget https://github.com/wagoodman/dive/releases/download/v${VERSION}/dive_${VERSION}_linux_amd64.deb
           sudo dpkg -i dive_${VERSION}_linux_amd64.deb
+      - name: get images
+        env:
+          ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+        run: |
+          for file in ${ALL_CHANGED_FILES}; do
+            
+          done
+          
       - name: find all directories
         run: |
           dive --ci --json analysis.json ghcr.io/alexta69/metube:latest 
@@ -43,7 +69,7 @@ jobs:
           if-no-files-found: warn
 
   trivy_scan:
-    # The type of runner that the job will run on
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
