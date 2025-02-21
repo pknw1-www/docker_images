@@ -17,6 +17,11 @@ jobs:
           files: |
             **.docker
             images/**.docker
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: List all changed files
         env:
           ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
@@ -29,8 +34,8 @@ jobs:
             docker image pull ${DEST_IMAGE_NAME}
             SOURCE_CHECKSUM=$( docker image inspect ${SOURCE_IMAGE_NAME} | jq '.[].Id')
             CURRENT_CHECKSUM=$(docker image inspect ${DEST_IMAGE_NAME} | jq '.[].Id')
-            echo ${SOURCE_CHECKSUM}
-            echo ${CURRENT_CHECKSUM}
+            echo ${SOURCE_CHECKSUM} >> $GITHUB_STEP_SUMMARY
+            echo ${CURRENT_CHECKSUM} >> $GITHUB_STEP_SUMMARY
             gh run cancel ${{ github.run_id }}
             gh run watch ${{ github.run_id }}
           done
