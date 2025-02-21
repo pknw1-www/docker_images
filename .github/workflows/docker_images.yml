@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: find all directories
         run: |
-          find images/ -type d -mindepth 2 -maxdepth 4 \;
+          find images/ -type d -mindepth 2 -maxdepth 4 
       - name: find all directories
         run: |
           find . -type f -mindepth 2 -maxdepth 4 -iname .docker -exec realpath "{}" \;
