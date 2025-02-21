@@ -15,6 +15,7 @@ jobs:
         run: |
           VERSION=$(curl https://github.com/wagoodman/dive/releases.atom| grep -oP '(?<=<title>v).*?(?=</title>)' | head -n1)
           wget https://github.com/wagoodman/dive/releases/download/v${VERSION}/dive_${VERSION}_linux_amd64.deb
+          sudo dpkg -i dive_${VERSION}_linux_amd64.deb
       - name: find all directories
         run: |
           find . -type f -mindepth 2 -maxdepth 4 -iname .docker -exec realpath "{}" \;
