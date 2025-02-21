@@ -14,4 +14,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: find all directories
-        run: find . -type d -mindepth 2 -maxdepth 3 -exec ls -l "{}" \;
+        run: find images/ -type d -mindepth 2 -maxdepth 3 -exec ls -l "{}" \;
